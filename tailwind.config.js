@@ -15,6 +15,9 @@ module.exports = {
       fontFamily: {
         oxygen: ["Oxygen", "sans-serif"],
       },
+      spacing: {
+        100: "36rem",
+      },
     },
   },
   plugins: [],

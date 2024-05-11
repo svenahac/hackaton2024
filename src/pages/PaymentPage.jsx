@@ -1,10 +1,4 @@
 import { useState } from "react";
-import { MdDashboard } from "react-icons/md";
-import { GrTransaction } from "react-icons/gr";
-import { PiVaultBold } from "react-icons/pi";
-import { FaUser } from "react-icons/fa";
-import { IoSettingsSharp } from "react-icons/io5";
-import Transaction from "../components/Transaction";
 
 export default function HomePage() {
   return (

@@ -2,3 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 @import url("https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap");
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.animated-item {
+  /* Define the initial state of the element */
+  opacity: 0;
+  transform: translateX(1000px);
+  /* Define the animation */
+  animation: appearAnimation 1.5s ease forwards; /* Use forwards to keep the final state after animation */
+}
+
+/* Define the keyframes for the animation */
+@keyframes appearAnimation {
+  from {
+    opacity: 0;
+    transform: translateX(1000px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
