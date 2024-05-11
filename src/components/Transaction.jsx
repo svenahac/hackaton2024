@@ -56,7 +56,6 @@ export default function Transaction({ transaction }) {
     }
   }, []);
 
-  console.log("Transaction", transaction.merchantName);
   return (
     <div
       //style={{ animationDelay: `${transaction.id * 0.1}s` }}

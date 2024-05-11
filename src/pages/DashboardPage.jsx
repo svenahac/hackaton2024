@@ -1,47 +1,10 @@
-import { useEffect, useState } from "react";
 import { MdDashboard } from "react-icons/md";
 import { GrTransaction } from "react-icons/gr";
 import { PiVaultBold } from "react-icons/pi";
 import { FaUser } from "react-icons/fa";
 import { IoSettingsSharp } from "react-icons/io5";
-import Transaction from "../components/Transaction";
-import { supabase } from "../supabase/supabaseClient";
 
-export default function HomePage() {
-  const [transactions, setTransactions] = useState([]);
-  const [newTransaction, setNewTransaction] = useState(null);
-
-  const handleInserts = (payload) => {
-    setNewTransaction(payload.new);
-  };
-
-  supabase
-    .channel("Transactions")
-    .on(
-      "postgres_changes",
-      { event: "INSERT", schema: "public", table: "Transactions" },
-      handleInserts
-    )
-    .subscribe();
-
-  useEffect(() => {
-    getTransactions();
-  }, [newTransaction]);
-
-  async function getTransactions() {
-    try {
-      const { data, error } = await supabase
-        .from("Transactions")
-        .select("*")
-        .order("unixTimestamp", { ascending: false });
-      if (error) throw error;
-      if (data != null) {
-        setTransactions(data);
-      }
-    } catch (err) {
-      console.error(err.message);
-    }
-  }
+export default function DashboardPage() {
   return (
     <div className="font-oxygen font-bold min-h-screen flex flex-row bg-secondary ">
       <div className="bg-primary w-96 lg:w-1/4 min-h-screen flex flex-col items-center text-white">
@@ -72,14 +35,9 @@ export default function HomePage() {
         </div>
       </div>
       <div className="w-3/4 min-h-screen">
-        <h1 className="text-5xl text-primary mt-20 ml-8">Transactions</h1>
-        <div className="mt-20 ml-8 mr-8 ">
-          <div className="text-3xl mb-3">Transaction History</div>
-          <div className="h-100 overflow-y-auto no-scrollbar">
-            {transactions.map((transaction) => (
-              <Transaction key={transaction.id} transaction={transaction} />
-            ))}
-          </div>
+        <h1 className="text-5xl text-primary mt-20 ml-8">Dashboard</h1>
+        <div className="mt-20 ml-8 mr-8 h-100 border-2 border-primary rounded-md">
+          <h1>Welcome</h1>
         </div>
       </div>
     </div>
