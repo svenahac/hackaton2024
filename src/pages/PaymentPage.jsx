@@ -83,7 +83,7 @@ export default function PaymentPage() {
           "TransactionId, UserId, Amount, LocationId, DateTime, TimeSince, MerchantFreq, TransactionType, TransactionDevice, MerchantType"
         )
         .order("DateTime", { ascending: false })
-        .eq("UserId", 2)
+        .eq("UserId", 1)
         .limit(9);
       if (error) throw error;
       if (data != null) {
@@ -100,7 +100,7 @@ export default function PaymentPage() {
       const { data, error } = await supabase
         .from("UserInfo")
         .select("*")
-        .eq("id", 2);
+        .eq("id", 1);
       if (error) throw error;
       if (data != null) {
         setUserInfo(data);
@@ -161,10 +161,18 @@ export default function PaymentPage() {
     });
   }
 
+  async function insertTransaction(newTransaction) {
+    console.log(newTransaction)
+    console.log(newTransaction)
+    const { data, error } = await supabase.from("Transaction").insert([
+      newTransaction
+    ]);
+  }
+
   async function sendTransaction() {
     const outData = {
       TransactionId: Math.floor(Math.random() * 80000),
-      UserId: 2,
+      UserId: 1,
       Amount: Math.floor(Math.random() * 100),
       MerchantType: getMerchant(),
       DateTime: Math.floor(Date.now() / 1000),
@@ -197,41 +205,95 @@ export default function PaymentPage() {
         console.error("Error:", error);
       });
     */
+    const reverseMerchantTypeMapping = {
+      Groceries: 1,
+      Shopping: 2,
+      Restaurants: 3,
+      Travel: 4,
+      Transport: 5,
+      Entertainment: 6,
+      Health: 7,
+      General: 8,
+    };
+    const reverseTransactionTypeMapping = {
+      Web: 1,
+      Credit: 2,
+      Debit: 3,
+      Other: 4,
+    };
+    const reverseTransactionDeviceMapping = {
+      Computer: 1,
+      Phone: 2,
+      Physical: 3,
+    };
+    let temp = [...transactions]
+    let temp_array = []
+    for (let i = 0; i < temp.length; i++) {
+      if (i !== 0){
+        temp[i].DateTime = parseInt(temp[i].DateTime)
+        temp[i].MerchantType = reverseMerchantTypeMapping[temp[i].MerchantType]
+        temp[i].TransactionDevice = reverseTransactionDeviceMapping[temp[i].TransactionDevice]
+        temp[i].TransactionType = reverseTransactionTypeMapping[temp[i].TransactionType]
+      }
+
+      let t = []
+      for (const key in temp[i]){
+        t.push(temp[i][key])
+      }
+      temp_array.push(t)
+    }
+    let u_profile = []
+    for (const key in userInfo[0]){
+      u_profile.push(userInfo[0][key])
+    }
+
+    console.log(userInfo, temp_array)
     axios
       .post(`http://localhost:5002/detect_fraud`, {
-        transaction_history: [transactions],
+        transaction_history: [temp_array],
         user_session_id: 1,
-        user_model: userInfo,
+        user_model: [u_profile],
         class_names: ["Declined", "Approved"],
       })
       .then((response) => {
         console.log(response);
-        setIsFraud(response.data);
+        const reverseMerchantTypeMapping2 = {
+          1: 'Groceries',
+          2: 'Shopping',
+          3: 'Restaurants',
+          4: 'Travel',
+          5: 'Transport',
+          6: 'Entertainment',
+          7: 'Health',
+          8: 'General',
+        };
+        const reverseTransactionTypeMapping2 = {
+          1: 'Web',
+          2: 'Credit',
+          3: 'Debit',
+          4: 'Other',
+        };
+        const reverseTransactionDeviceMapping2 = {
+          1: 'Computer',
+          2: 'Phone',
+          3: 'Physical',
+        };
+        let label = response.data.Prediction[0]
+        let newTransaction2 = transactions[0]
+
+        newTransaction2.DateTime = (newTransaction2.DateTime).toString()
+        newTransaction2.MerchantType = reverseMerchantTypeMapping2[newTransaction2.MerchantType]
+        newTransaction2.TransactionType = reverseTransactionTypeMapping2[newTransaction2.TransactionType]
+        newTransaction2.TransactionDevice = reverseTransactionDeviceMapping2[newTransaction2.TransactionDevice]
+        let numericLabel = label === "Declined" ? 1 : 0
+        newTransaction2["Fraudulent"] = numericLabel
+        insertTransaction(newTransaction2)
       })
       .catch((error) => {
         console.error("Error:", error);
       });
+      console.log(isFraud)
 
-    try {
-      const { data, error } = await supabase.from("Transaction").insert([
-        {
-          TransactionId: outData.TransactionId,
-          UserId: outData.UserId,
-          Fraudulent: outData.Fraudulent,
-          Amount: outData.Amount,
-          MerchantType: outData.MerchantType,
-          DateTime: outData.DateTime,
-          TransactionType: outData.TransactionType,
-          TransactionDevice: outData.TransactionDevice,
-          LocationId: outData.LocationId,
-          TimeSince: outData.TimeSince,
-          MerchantFreq: outData.MerchantFreq,
-        },
-      ]);
-      if (error) throw error;
-    } catch (err) {
-      console.error(err.message);
-    }
   }
 
   function genRand() {

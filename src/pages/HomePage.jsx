@@ -34,7 +34,7 @@ export default function HomePage() {
         .from("Transaction")
         .select("Amount, MerchantType, Fraudulent, DateTime, TransactionId")
         .order("DateTime", { ascending: false })
-        .eq("UserId", 2)
+        .eq("UserId", 1)
         .limit(100);
       if (error) throw error;
       if (data != null) {
