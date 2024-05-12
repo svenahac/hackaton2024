@@ -33,11 +33,11 @@ export default function HomePage() {
       const { data, error } = await supabase
         .from("Transaction")
         .select("Amount, MerchantType, Fraudulent, DateTime, TransactionId")
-        .eq("UserId", 1)
-        .order("DateTime", { ascending: false });
+        .order("DateTime", { ascending: false })
+        .eq("UserId", 2)
+        .limit(100);
       if (error) throw error;
       if (data != null) {
-        console.log(data);
         setTransactions(data);
       }
     } catch (err) {
@@ -78,10 +78,12 @@ export default function HomePage() {
         <div className="mt-20 ml-8 mr-8 ">
           <div className="text-3xl mb-3">Transaction History</div>
           <div className="h-100 overflow-y-auto no-scrollbar">
-            {transactions.map((transaction) => (
+            {transactions.map((transaction, index) => (
               <Transaction
                 key={transaction.TransactionId}
                 transaction={transaction}
+                index={index}
+                allTransactions={transactions}
               />
             ))}
           </div>
