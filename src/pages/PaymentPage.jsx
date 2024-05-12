@@ -129,7 +129,7 @@ export default function PaymentPage() {
       TimeSince: 0,
       MerchantFreq: 0,
     };
-
+    /*
     axios
       .post(`http://localhost:5002/update_user_model`, {
         transaction: [
@@ -151,7 +151,7 @@ export default function PaymentPage() {
       .catch((error) => {
         console.error("Error:", error);
       });
-
+    */
     await axios
       .post(`http://localhost:5002/detect_fraud`, {
         transaction_history: [transactions],
