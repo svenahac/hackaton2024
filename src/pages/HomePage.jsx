@@ -16,10 +16,10 @@ export default function HomePage() {
   };
 
   supabase
-    .channel("Transactions")
+    .channel("Transaction")
     .on(
       "postgres_changes",
-      { event: "INSERT", schema: "public", table: "Transactions" },
+      { event: "INSERT", schema: "public", table: "Transaction" },
       handleInserts
     )
     .subscribe();
@@ -31,11 +31,13 @@ export default function HomePage() {
   async function getTransactions() {
     try {
       const { data, error } = await supabase
-        .from("Transactions")
-        .select("*")
-        .order("unixTimestamp", { ascending: false });
+        .from("Transaction")
+        .select("Amount, MerchantType, Fraudulent, DateTime, TransactionId")
+        .eq("UserId", 1)
+        .order("DateTime", { ascending: false });
       if (error) throw error;
       if (data != null) {
+        console.log(data);
         setTransactions(data);
       }
     } catch (err) {
@@ -77,7 +79,10 @@ export default function HomePage() {
           <div className="text-3xl mb-3">Transaction History</div>
           <div className="h-100 overflow-y-auto no-scrollbar">
             {transactions.map((transaction) => (
-              <Transaction key={transaction.id} transaction={transaction} />
+              <Transaction
+                key={transaction.TransactionId}
+                transaction={transaction}
+              />
             ))}
           </div>
         </div>

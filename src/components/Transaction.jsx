@@ -3,6 +3,7 @@ import { IoFlag } from "react-icons/io5";
 
 export default function Transaction({ transaction }) {
   const [color, setColor] = useState("text-secondaryHighlight");
+  const [isFraudulent, setIsFraudulent] = useState("");
   const [buttonClicked, setButtonClicked] = useState(false);
   const [buttonColor, setButtonColor] = useState("text-secondaryHighlight");
 
@@ -49,10 +50,12 @@ export default function Transaction({ transaction }) {
   }
 
   useEffect(() => {
-    if (transaction.status === "Approved") {
+    if (transaction.Fraudulent === 0) {
       setColor("text-green ");
+      setIsFraudulent("Approved");
     } else {
       setColor("text-red");
+      setIsFraudulent("Declined");
     }
   }, []);
 
@@ -62,7 +65,7 @@ export default function Transaction({ transaction }) {
       className="animated-item  text-secondaryHighlight text-xl font-bold flex flex-row items-center justify-between bg-white p-4 rounded-lg mb-4"
     >
       <div className="w-1/4 flex flex-row items-center">
-        <p className="mr-2">{transaction.merchantName}</p>
+        <p className="mr-2">{transaction.MerchantType}</p>
         <button
           className={buttonColor}
           onClick={handleFlagClick}
@@ -72,9 +75,9 @@ export default function Transaction({ transaction }) {
           <IoFlag />
         </button>
       </div>
-      <p className="w-1/4">{timeConverter(transaction.unixTimestamp)}</p>
-      <p className="w-1/4">{transaction.amount}€</p>
-      <p className={color}>{transaction.status}</p>
+      <p className="w-1/4">{timeConverter(transaction.DateTime)}</p>
+      <p className="w-1/4">{transaction.Amount}€</p>
+      <p className={color}>{isFraudulent}</p>
     </div>
   );
 }
