@@ -61,23 +61,25 @@ export default function PaymentPage() {
 
     axios
       .post(
-        `http://hackathon.settler-slovenia.com/update_user_model`,
+        `http://localhost:5002/update_user_model`,
         {
-          TransactionId: outData.TransactionId,
-          UserId: outData.UserId,
-          Fraudulent: outData.Fraudulent,
-          Amount: outData.Amount,
-          MerchantType: outData.MerchantType,
-          DateTime: outData.DateTime,
-          TransactionType: outData.TransactionType,
-          TransactionDevice: outData.TransactionDevice,
-          LocationId: outData.LocationId,
-          TimeSince: outData.TimeSince,
-          MerchantFreq: outData.MerchantFreq,
-        },
-        { withCredentials: true }
+          transaction: [outData.TransactionId,
+            outData.UserId,
+            outData.Amount,
+            outData.LocationId,
+            outData.DateTime,
+            outData.TimeSince,
+            outData.MerchantFreq,
+            outData.Fraudulent,
+            outData.MerchantType,
+            outData.TransactionType,
+            outData.TransactionDevice,
+          ]
+        }
       )
-      .then((response) => {})
+      .then((response) => {
+        console.log(response)
+      })
       .catch((error) => {
         console.error("Error:", error);
       });
