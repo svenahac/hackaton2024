@@ -21,9 +21,54 @@ export default function PaymentPage() {
     }
   }
   */
+
+  function reverseTransformations(data) {
+    // Define reverse mappings
+    const reverseMerchantTypeMapping = {
+      Groceries: 1,
+      Shopping: 2,
+      Restaurants: 3,
+      Travel: 4,
+      Transport: 5,
+      Entertainment: 6,
+      Health: 7,
+      General: 8,
+    };
+    const reverseTransactionTypeMapping = {
+      Web: 1,
+      Credit: 2,
+      Debit: 3,
+      Other: 4,
+    };
+    const reverseTransactionDeviceMapping = {
+      Computer: 1,
+      Phone: 2,
+      Physical: 3,
+    };
+
+    // Replace the values based on the reverse mapping
+    data.forEach((entry) => {
+      entry["MerchantType"] = reverseMerchantTypeMapping[entry["MerchantType"]];
+      entry["TransactionType"] =
+        reverseTransactionTypeMapping[entry["TransactionType"]];
+      entry["TransactionDevice"] =
+        reverseTransactionDeviceMapping[entry["TransactionDevice"]];
+    });
+
+    console.log("Data has been reversed");
+  }
+
   const [transactions, setTransactions] = useState([]);
   const [userInfo, setUserInfo] = useState([]);
   const [isFraud, setIsFraud] = useState();
+
+  function applyReverseTransformationsToArray(array) {
+    return array.map((data) => {
+      // Assuming reverseTransformations is defined elsewhere
+      reverseTransformations(data);
+      return data;
+    });
+  }
 
   useEffect(() => {
     getTransactions();
@@ -55,7 +100,7 @@ export default function PaymentPage() {
       const { data, error } = await supabase
         .from("UserInfo")
         .select("*")
-        .eq("UserId", 2);
+        .eq("id", 2);
       if (error) throw error;
       if (data != null) {
         setUserInfo(data);
@@ -118,7 +163,7 @@ export default function PaymentPage() {
 
   async function sendTransaction() {
     const outData = {
-      TransactionId: Math.floor(Math.random() * 10000),
+      TransactionId: Math.floor(Math.random() * 80000),
       UserId: 2,
       Amount: Math.floor(Math.random() * 100),
       MerchantType: getMerchant(),
@@ -152,7 +197,7 @@ export default function PaymentPage() {
         console.error("Error:", error);
       });
     */
-    await axios
+    axios
       .post(`http://localhost:5002/detect_fraud`, {
         transaction_history: [transactions],
         user_session_id: 1,
